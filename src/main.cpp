@@ -46,6 +46,8 @@ int main()
 
 	FallingWordList fallingWordList;
 
+	sf::String currentAnswer = "";
+
 	while ( window.isOpen() )
 	{
 		float dt = fallClock.restart().asSeconds();
@@ -55,14 +57,14 @@ int main()
 			dropClock.restart();
 		}
 
-		fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE);
+		fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE, currentAnswer);
 
 		while ( const std::optional event = window.pollEvent() )
 		{
 			if ( event->is<sf::Event::Closed>() )
 				window.close();
 			if ( event->is<sf::Event::TextEntered>() )
-				answerText.handleTypedOn(*event);
+				currentAnswer = answerText.handleTypedOn(*event);
 		}
 
 		window.clear();

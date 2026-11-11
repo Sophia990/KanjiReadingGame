@@ -8,13 +8,15 @@ sf::String Textbox::getText() {
     return text;
 }
 
-void Textbox::handleInput(std::uint32_t unicodeTyped) {
+sf::String Textbox::handleInput(std::uint32_t unicodeTyped) {
+    sf::String answerToReturn = "";
     if (unicodeTyped == DELETE_KEY) {
         if (!text.isEmpty()) {
             text.erase(text.getSize() - 1);
         }
     }
     else if (unicodeTyped == ENTER_KEY) {
+        answerToReturn = text;
         text = "";
     }
     else if (unicodeTyped != ESCAPE_KEY) {
@@ -22,6 +24,7 @@ void Textbox::handleInput(std::uint32_t unicodeTyped) {
     }
     textbox.setString(text + "_");
     textbox.setOrigin(textbox.getLocalBounds().getCenter());
+    return answerToReturn;
 }
 
 void Textbox::setPosition(sf::Vector2f point) {
@@ -36,11 +39,12 @@ void Textbox::drawTextbox(sf::RenderWindow &window) {
     window.draw(textbox);
 }
 
-void Textbox::handleTypedOn(const sf::Event& input) {
+sf::String Textbox::handleTypedOn(const sf::Event& input) {
     if (const auto* textEntered = input.getIf<sf::Event::TextEntered>()) {
         int charTyped = static_cast<int>(textEntered->unicode);
         if (text.getSize() <= limit || charTyped == DELETE_KEY || charTyped == ENTER_KEY) {
-            handleInput(charTyped);
+            return handleInput(charTyped);
         }
     }
+    return "";
 }

@@ -20,14 +20,14 @@ public:
     void setPosition(sf::Vector2f point);
     void setLimit(int lim);
     void drawTextbox(sf::RenderWindow &window);
-    void handleTypedOn(const sf::Event& input);
+    sf::String handleTypedOn(const sf::Event& input);
 private:
     sf::Text textbox;
     sf::String text;
     int limit = 0;
 
     sf::String getText();
-    void handleInput(std::uint32_t unicodeTyped);
+    sf::String handleInput(std::uint32_t unicodeTyped);
 };
 
 #endif //CMAKESFMLPROJECT_TEXTBOX_H

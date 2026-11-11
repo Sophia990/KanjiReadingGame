@@ -14,12 +14,16 @@ void FallingWordList::dropWord(std::uniform_real_distribution<float> &xDist,
                                           position);
 }
 
-void FallingWordList::update(float dt, float speed, float bottomLine) {
+void FallingWordList::update(float dt, float speed, float bottomLine, const sf::String& answer) {
     for (auto word = fallingWordList.begin(); word != fallingWordList.end(); ) {
         word->fall(dt, speed, bottomLine);
+        if (!answer.isEmpty() && (answer == word->getKana() || answer == word->getRomaji())) {
+            word->destroy(true);
+        }
         if (word->getShouldDestroy()) {
             word = fallingWordList.erase(word);
-        } else {
+        }
+        else {
             ++word;
         }
     }

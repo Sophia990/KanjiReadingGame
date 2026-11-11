@@ -26,12 +26,11 @@ public:
     bool getShouldDestroy() const;
     void drawWord(sf::RenderWindow &window);
     void fall(float dt, float speed, float bottomLine);
+    void destroy(bool answeredCorrectly);
 
 private:
     sf::Text text;
     bool shouldDestroy = false;
-
-    void destroy(bool answeredCorrectly);
 };
 
 
