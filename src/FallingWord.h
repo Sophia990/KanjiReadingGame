@@ -24,9 +24,12 @@ public:
     sf::Vector2f position;
 
     void drawWord(sf::RenderWindow &window);
+    void fall(float dt, float speed, float bottomLine);
 
 private:
     sf::Text text;
+
+    void destroy(bool answeredCorrectly);
 };
 
 

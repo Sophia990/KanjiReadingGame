@@ -8,15 +8,27 @@ int main()
 {
 	sf::RenderWindow window( sf::VideoMode::getDesktopMode(), "Kanji Reading Game" );
 
+	const float BOTTOM_LINE_Y_COORDINATE = static_cast<float>(window.getSize().y) - 400.f;
+
 	// load font
 	sf::Font font;
 	if (!font.openFromFile("assets/fonts/NotoSansJP-Black.ttf")) std::cout << "Font not found\n";
 
+	// for words falling on screen
+	sf::Clock clock;
+	const float fallSpeed = 30.f;
+
     // make textbox for answer
 	Textbox answerText(50, sf::Color::White, font);
 	answerText.setPosition({(static_cast<float>(window.getSize().x) / 2.f),
-							static_cast<float>(window.getSize().y) - 300.f});
+							static_cast<float>(window.getSize().y) - 200.f});
 	answerText.setLimit(50);
+
+	// make bottom line
+	std::array bottomLine = {
+			sf::Vertex{sf::Vector2f(0.f, BOTTOM_LINE_Y_COORDINATE)},
+			sf::Vertex{sf::Vector2f(static_cast<float>(window.getSize().x), BOTTOM_LINE_Y_COORDINATE)}
+	};
 
 	// for randomness
 	std::random_device rd;
@@ -29,6 +41,9 @@ int main()
 
 	while ( window.isOpen() )
 	{
+		float dt = clock.restart().asSeconds();
+		testWord.fall(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE);
+
 		while ( const std::optional event = window.pollEvent() )
 		{
 			if ( event->is<sf::Event::Closed>() )
@@ -39,6 +54,7 @@ int main()
 
 		window.clear();
 		answerText.drawTextbox(window);
+		window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
 		testWord.drawWord(window);
 		window.display();
 	}
