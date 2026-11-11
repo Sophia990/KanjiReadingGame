@@ -7,11 +7,14 @@ void FallingWord::drawWord(sf::RenderWindow &window) {
 
 void FallingWord::fall(float dt, float speed, float bottomLine) {
     position.y += speed * dt;
-    if (position.y <= bottomLine) {
+    if (position.y >= bottomLine) {
         destroy(false);
     }
 }
 
 void FallingWord::destroy(bool answeredCorrectly) {
-    // TODO remove from list of falling words later
+    shouldDestroy = true;
+    // TODO add points or deduct lives
 }
+
+bool FallingWord::getShouldDestroy() const {return shouldDestroy;}

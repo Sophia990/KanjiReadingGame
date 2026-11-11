@@ -8,11 +8,11 @@ class FallingWord: public Word {
 
 public:
     FallingWord(sf::String kanji,
-                sf::String japaneseReading,
-                sf::String romajiReading,
+                sf::String kana,
+                sf::String romaji,
                 const sf::Font& font,
                 sf::Vector2f position)
-                : Word(std::move(kanji), std::move(japaneseReading), std::move(romajiReading)),
+                : Word(std::move(kanji), std::move(kana), std::move(romaji)),
                        text(font),
                        position(position) {
         text.setCharacterSize(50);
@@ -23,11 +23,13 @@ public:
 
     sf::Vector2f position;
 
+    bool getShouldDestroy() const;
     void drawWord(sf::RenderWindow &window);
     void fall(float dt, float speed, float bottomLine);
 
 private:
     sf::Text text;
+    bool shouldDestroy = false;
 
     void destroy(bool answeredCorrectly);
 };

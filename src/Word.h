@@ -8,20 +8,20 @@ class Word {
 
 public:
     Word(sf::String kanji,
-         sf::String japaneseReading,
-         sf::String romajiReading)
+         sf::String kana,
+         sf::String romaji)
          : kanji(std::move(kanji)),
-         japaneseReading(std::move(japaneseReading)),
-         romajiReading(std::move(romajiReading)) {}
+           kana(std::move(kana)),
+           romaji(std::move(romaji)) {}
 
     sf::String getKanji();
-    sf::String getJapaneseReading();
-    sf::String getRomajiReading();
+    sf::String getKana();
+    sf::String getRomaji();
 
 private:
     sf::String kanji;
-    sf::String japaneseReading;
-    sf::String romajiReading;
+    sf::String kana;
+    sf::String romaji;
 };
 
 

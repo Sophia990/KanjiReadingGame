@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include "Textbox.h"
 #include "FallingWord.h"
+#include "WordList.h"
+#include "FallingWordList.h"
 
 int main()
 {
@@ -15,8 +17,12 @@ int main()
 	if (!font.openFromFile("assets/fonts/NotoSansJP-Black.ttf")) std::cout << "Font not found\n";
 
 	// for words falling on screen
-	sf::Clock clock;
+	sf::Clock fallClock;
 	const float fallSpeed = 30.f;
+
+	// for spawning words at a time interval
+	sf::Clock dropClock;
+	const float dropInterval = 3.f;
 
     // make textbox for answer
 	Textbox answerText(50, sf::Color::White, font);
@@ -35,14 +41,21 @@ int main()
 	std::mt19937 randomNumberGenerator(rd());
 	std::uniform_real_distribution<float> xDist(100.f, static_cast<float>(window.getSize().x) - 100);
 
-	// temporarily make word to test drawing a word
-	sf::Vector2f position = {xDist(randomNumberGenerator), 0.f};
-	FallingWord testWord(U"漢字", U"かんじ", U"kanji", font, position);
+	WordList wordList;
+	std::uniform_int_distribution<int> wordDist(0, static_cast<int>(std::size(wordList.tempWordArray)) - 1);
+
+	FallingWordList fallingWordList;
 
 	while ( window.isOpen() )
 	{
-		float dt = clock.restart().asSeconds();
-		testWord.fall(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE);
+		float dt = fallClock.restart().asSeconds();
+
+		if (dropClock.getElapsedTime().asSeconds() >= dropInterval) {
+			fallingWordList.dropWord(xDist, wordDist, randomNumberGenerator, font, wordList);
+			dropClock.restart();
+		}
+
+		fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE);
 
 		while ( const std::optional event = window.pollEvent() )
 		{
@@ -55,7 +68,9 @@ int main()
 		window.clear();
 		answerText.drawTextbox(window);
 		window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
-		testWord.drawWord(window);
+		for (FallingWord& word : fallingWordList.fallingWordList) {
+			word.drawWord(window);
+		}
 		window.display();
 	}
 }
