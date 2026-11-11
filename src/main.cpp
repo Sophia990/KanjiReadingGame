@@ -12,6 +12,10 @@ int main()
 
 	const float BOTTOM_LINE_Y_COORDINATE = static_cast<float>(window.getSize().y) - 400.f;
 
+	// points and lives
+	int points = 0;
+	int lives = 5;
+
 	// load font
 	sf::Font font;
 	if (!font.openFromFile("assets/fonts/NotoSansJP-Black.ttf")) std::cout << "Font not found\n";
@@ -22,7 +26,7 @@ int main()
 
 	// for spawning words at a time interval
 	sf::Clock dropClock;
-	const float dropInterval = 3.f;
+	const float dropInterval = 2.f;
 
     // make textbox for answer
 	Textbox answerText(50, sf::Color::White, font);
@@ -35,6 +39,21 @@ int main()
 			sf::Vertex{sf::Vector2f(0.f, BOTTOM_LINE_Y_COORDINATE)},
 			sf::Vertex{sf::Vector2f(static_cast<float>(window.getSize().x), BOTTOM_LINE_Y_COORDINATE)}
 	};
+
+	// make points text
+	sf::Text pointsText(font);
+	pointsText.setString("Points: " + std::to_string(points));
+	pointsText.setCharacterSize(50);
+	pointsText.setFillColor(sf::Color::White);
+    pointsText.setOrigin({pointsText.getLocalBounds().size.x, 0.f});
+    pointsText.setPosition({static_cast<float>(window.getSize().x) - 300.f, static_cast<float>(window.getSize().y) - 300.f});
+
+	// make lives text
+	sf::Text livesText(font);
+	livesText.setString("Lives: " + std::to_string(lives));
+	livesText.setCharacterSize(50);
+	livesText.setFillColor(sf::Color::White);
+    livesText.setPosition({300.f, static_cast<float>(window.getSize().y) - 300.f});
 
 	// for randomness
 	std::random_device rd;
@@ -57,7 +76,9 @@ int main()
 			dropClock.restart();
 		}
 
-		fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE, currentAnswer);
+		fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE, currentAnswer, points, lives);
+        pointsText.setString("Points: " + std::to_string(points));
+        livesText.setString("Lives: " + std::to_string(lives));
 
 		while ( const std::optional event = window.pollEvent() )
 		{
@@ -69,6 +90,8 @@ int main()
 
 		window.clear();
 		answerText.drawTextbox(window);
+		window.draw(pointsText);
+		window.draw(livesText);
 		window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
 		for (FallingWord& word : fallingWordList.fallingWordList) {
 			word.drawWord(window);

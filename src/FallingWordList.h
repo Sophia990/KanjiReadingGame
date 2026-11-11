@@ -16,7 +16,7 @@ public:
                              const sf::Font &font,
                              const WordList &wordList);
 
-    void update(float dt, float speed, float bottomLine, const sf::String& answer);
+    void update(float dt, float speed, float bottomLine, const sf::String& answer, int& points, int& lives);
 };
 
 

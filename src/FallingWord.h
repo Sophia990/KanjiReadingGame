@@ -25,8 +25,8 @@ public:
 
     bool getShouldDestroy() const;
     void drawWord(sf::RenderWindow &window);
-    void fall(float dt, float speed, float bottomLine);
-    void destroy(bool answeredCorrectly);
+    void fall(float dt, float speed, float bottomLine, int& points, int& lives);
+    void destroy(bool answeredCorrectly, int& points, int& lives);
 
 private:
     sf::Text text;
