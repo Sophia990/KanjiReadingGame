@@ -13,12 +13,13 @@ int main()
 
     // make textbox for answer
 	Textbox answerText(50, sf::Color::White, font);
-	answerText.setPosition({(static_cast<float>(window.getSize().x) / 2.f) - 750,
+	answerText.setPosition({(static_cast<float>(window.getSize().x) / 2.f),
 							static_cast<float>(window.getSize().y) - 300.f});
 	answerText.setLimit(50);
 
 	// temporarily make word to test drawing a word
-	FallingWord testWord(U"漢字", U"かんじ", U"kanji", font);
+	sf::Vector2f position = {static_cast<float>(window.getSize().x) / 2.f, 0};
+	FallingWord testWord(U"漢字", U"かんじ", U"kanji", font, position);
 
 	while ( window.isOpen() )
 	{

@@ -14,6 +14,7 @@ public:
         textbox.setCharacterSize(characterSize);
         textbox.setFillColor(colour);
         textbox.setString("_");
+        textbox.setOrigin(textbox.getLocalBounds().getCenter());
     }
 
     void setPosition(sf::Vector2f point);

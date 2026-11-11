@@ -10,15 +10,18 @@ public:
     FallingWord(sf::String kanji,
                 sf::String japaneseReading,
                 sf::String romajiReading,
-                const sf::Font& font)
+                const sf::Font& font,
+                sf::Vector2f position)
                 : Word(std::move(kanji), std::move(japaneseReading), std::move(romajiReading)),
-                       text(font) {
+                       text(font),
+                       position(position) {
         text.setCharacterSize(50);
         text.setFillColor(sf::Color::White);
         text.setString(getKanji());
+        text.setOrigin(text.getLocalBounds().getCenter());
     }
 
-    sf::Vector2f position = {0.f, 0.f};
+    sf::Vector2f position;
 
     void drawWord(sf::RenderWindow &window);
 

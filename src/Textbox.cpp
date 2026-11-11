@@ -21,6 +21,7 @@ void Textbox::handleInput(std::uint32_t unicodeTyped) {
         text += static_cast<char32_t>(unicodeTyped);
     }
     textbox.setString(text + "_");
+    textbox.setOrigin(textbox.getLocalBounds().getCenter());
 }
 
 void Textbox::setPosition(sf::Vector2f point) {
