@@ -16,6 +16,10 @@ FetchContent_MakeAvailable(SFML)
 add_executable(main src/main.cpp
         src/Textbox.cpp
         src/Textbox.h
+        src/Word.cpp
+        src/Word.h
+        src/FallingWord.cpp
+        src/FallingWord.h
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)

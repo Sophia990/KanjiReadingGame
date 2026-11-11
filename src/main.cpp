@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Textbox.h"
+#include "FallingWord.h"
 
 int main()
 {
@@ -16,6 +17,9 @@ int main()
 							static_cast<float>(window.getSize().y) - 300.f});
 	answerText.setLimit(50);
 
+	// temporarily make word to test drawing a word
+	FallingWord testWord(U"漢字", U"かんじ", U"kanji", font);
+
 	while ( window.isOpen() )
 	{
 		while ( const std::optional event = window.pollEvent() )
@@ -28,6 +32,7 @@ int main()
 
 		window.clear();
 		answerText.drawTextbox(window);
+		testWord.drawWord(window);
 		window.display();
 	}
 }
