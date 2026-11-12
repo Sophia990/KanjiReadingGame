@@ -1,14 +1,26 @@
 #include <iostream>
 #include <random>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Textbox.h"
-#include "FallingWord.h"
 #include "WordList.h"
 #include "FallingWordList.h"
+#include "Button.h"
+
+enum GameState {
+	START_MENU,
+	GAME,
+	GAME_OVER
+};
 
 int main()
 {
-	sf::RenderWindow window( sf::VideoMode::getDesktopMode(), "Kanji Reading Game" );
+    sf::RenderWindow window( sf::VideoMode::getDesktopMode(), "It's Raining Kanji" );
+
+    window.display();
+    window.clear();
+
+    enum GameState gameState = START_MENU;
 
 	const float BOTTOM_LINE_Y_COORDINATE = static_cast<float>(window.getSize().y) - 400.f;
 
@@ -19,6 +31,22 @@ int main()
 	// load font
 	sf::Font font;
 	if (!font.openFromFile("assets/fonts/NotoSansJP-Black.ttf")) std::cout << "Font not found\n";
+
+	// for sound effects
+	sf::SoundBuffer correctBuffer;
+	sf::SoundBuffer incorrectBuffer;
+	if (!correctBuffer.loadFromFile("assets/audio/correct.wav"))
+		std::cout << "Correct sound not found\n";
+	if (!incorrectBuffer.loadFromFile("assets/audio/incorrect.wav"))
+		std::cout << "Incorrect sound not found\n";
+	sf::Sound correctSound(correctBuffer);
+	sf::Sound incorrectSound(incorrectBuffer);
+
+	// for music
+	sf::Music music;
+	if (!music.openFromFile("assets/audio/music.ogg"))
+		std::cout << "Correct sound not found\n";
+	music.setLooping(true);
 
 	// for words falling on screen
 	sf::Clock fallClock;
@@ -61,41 +89,126 @@ int main()
 	std::uniform_real_distribution<float> xDist(100.f, static_cast<float>(window.getSize().x) - 100);
 
 	WordList wordList;
-	std::uniform_int_distribution<int> wordDist(0, static_cast<int>(std::size(wordList.tempWordArray)) - 1);
+	wordList.readCSV("assets/vocab/vocab-n5.csv");
 
 	FallingWordList fallingWordList;
 
 	sf::String currentAnswer = "";
 
+	// title text
+	sf::Text titleText(font);
+	titleText.setString("It's Raining Kanji");
+	titleText.setCharacterSize(200);
+	titleText.setFillColor(sf::Color::White);
+	titleText.setOrigin(titleText.getLocalBounds().getCenter());
+	titleText.setPosition({static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) - 150});
+
+	// start button
+	Button startButton("Start", {200, 100}, 30, sf::Color::Blue, sf::Color::White, font);
+	startButton.setPosition({static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) + 150});
+
+	// game over text
+	sf::Text gameOverText(font);
+	gameOverText.setString("Game Over!");
+	gameOverText.setCharacterSize(200);
+	gameOverText.setFillColor(sf::Color::White);
+	gameOverText.setOrigin(gameOverText.getLocalBounds().getCenter());
+	gameOverText.setPosition({static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) - 300});
+
+	// final points text
+	sf::Text finalPointsText(font);
+	finalPointsText.setString("Points: " + std::to_string(points));
+	finalPointsText.setCharacterSize(200);
+	finalPointsText.setFillColor(sf::Color::White);
+	finalPointsText.setOrigin(finalPointsText.getLocalBounds().getCenter());
+	finalPointsText.setPosition({static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f)});
+
+	// return to menu button
+    Button returnToMenuButton("Return to Menu", {300, 100}, 30, sf::Color::Blue, sf::Color::White, font);
+	returnToMenuButton.setPosition({static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) + 300});
+
 	while ( window.isOpen() )
 	{
-		float dt = fallClock.restart().asSeconds();
-
-		if (dropClock.getElapsedTime().asSeconds() >= dropInterval) {
-			fallingWordList.dropWord(xDist, wordDist, randomNumberGenerator, font, wordList);
-			dropClock.restart();
-		}
-
-		fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE, currentAnswer, points, lives);
-        pointsText.setString("Points: " + std::to_string(points));
-        livesText.setString("Lives: " + std::to_string(lives));
-
-		while ( const std::optional event = window.pollEvent() )
+		while ( window.isOpen() && gameState == START_MENU )
 		{
-			if ( event->is<sf::Event::Closed>() )
-				window.close();
-			if ( event->is<sf::Event::TextEntered>() )
-				currentAnswer = answerText.handleTypedOn(*event);
+			while ( const std::optional event = window.pollEvent() )
+			{
+				if ( event->is<sf::Event::Closed>() )
+					window.close();
+				if ( event->is<sf::Event::MouseButtonPressed>() )
+					if (startButton.isMouseOver(window)) {
+                        fallClock.restart();
+                        dropClock.restart();
+						music.play();
+						gameState = GAME;
+					}
+			}
+
+			window.clear();
+			window.draw(titleText);
+			startButton.drawButton(window);
+			window.display();
 		}
 
-		window.clear();
-		answerText.drawTextbox(window);
-		window.draw(pointsText);
-		window.draw(livesText);
-		window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
-		for (FallingWord& word : fallingWordList.fallingWordList) {
-			word.drawWord(window);
+		while ( window.isOpen() && lives > 0 && gameState == GAME)
+		{
+			float dt = fallClock.restart().asSeconds();
+
+			if (dropClock.getElapsedTime().asSeconds() >= dropInterval) {
+				fallingWordList.dropWord(xDist, randomNumberGenerator, font, wordList);
+				dropClock.restart();
+			}
+
+			fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE, currentAnswer, points, lives, correctSound, incorrectSound);
+			pointsText.setString("Points: " + std::to_string(points));
+			livesText.setString("Lives: " + std::to_string(lives));
+
+			while ( const std::optional event = window.pollEvent() )
+			{
+				if ( event->is<sf::Event::Closed>() )
+					window.close();
+				if ( event->is<sf::Event::TextEntered>() )
+					currentAnswer = answerText.handleTypedOn(*event);
+			}
+
+			window.clear();
+			answerText.drawTextbox(window);
+			window.draw(pointsText);
+			window.draw(livesText);
+			window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
+			fallingWordList.drawWords(window);
+			window.display();
 		}
-		window.display();
+
+		gameState = GAME_OVER;
+		music.stop();
+
+		while ( window.isOpen() && gameState == GAME_OVER ) {
+			while ( const std::optional event = window.pollEvent() )
+			{
+				if ( event->is<sf::Event::Closed>() )
+					window.close();
+				if ( event->is<sf::Event::MouseButtonPressed>() )
+					if (returnToMenuButton.isMouseOver(window)) {
+						// reset game variables
+						points = 0;
+						lives = 5;
+						answerText.clearText();
+						currentAnswer = "";
+						wordList.wordList.clear();
+						wordList.readCSV("assets/vocab/vocab-n5.csv");
+						fallingWordList.clearWords();
+						gameState = START_MENU;
+					}
+			}
+
+			window.clear();
+			finalPointsText.setString("Points: " + std::to_string(points));
+			finalPointsText.setOrigin(finalPointsText.getLocalBounds().getCenter());
+			window.draw(gameOverText);
+			window.draw(finalPointsText);
+			returnToMenuButton.drawButton(window);
+			window.display();
+		}
 	}
 }

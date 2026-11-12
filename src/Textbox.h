@@ -20,6 +20,7 @@ public:
     void setPosition(sf::Vector2f point);
     void setLimit(int lim);
     void drawTextbox(sf::RenderWindow &window);
+    void clearText();
     sf::String handleTypedOn(const sf::Event& input);
 private:
     sf::Text textbox;

@@ -39,6 +39,12 @@ void Textbox::drawTextbox(sf::RenderWindow &window) {
     window.draw(textbox);
 }
 
+void Textbox::clearText() {
+    text = "";
+    textbox.setString("_");
+    textbox.setOrigin(textbox.getLocalBounds().getCenter());
+}
+
 sf::String Textbox::handleTypedOn(const sf::Event& input) {
     if (const auto* textEntered = input.getIf<sf::Event::TextEntered>()) {
         int charTyped = static_cast<int>(textEntered->unicode);

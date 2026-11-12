@@ -2,6 +2,7 @@
 #define CMAKESFMLPROJECT_FALLINGWORD_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Word.h"
 
 class FallingWord: public Word {
@@ -25,8 +26,8 @@ public:
 
     bool getShouldDestroy() const;
     void drawWord(sf::RenderWindow &window);
-    void fall(float dt, float speed, float bottomLine, int& points, int& lives);
-    void destroy(bool answeredCorrectly, int& points, int& lives);
+    void fall(float dt, float speed, float bottomLine, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound);
+    void destroy(bool answeredCorrectly, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound);
 
 private:
     sf::Text text;

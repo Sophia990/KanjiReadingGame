@@ -24,9 +24,11 @@ add_executable(main src/main.cpp
         src/WordList.h
         src/FallingWordList.cpp
         src/FallingWordList.h
+        src/Button.cpp
+        src/Button.h
 )
 target_compile_features(main PRIVATE cxx_std_17)
-target_link_libraries(main PRIVATE SFML::Graphics)
+target_link_libraries(main PRIVATE SFML::Graphics SFML::Audio)
 
 add_custom_command(TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

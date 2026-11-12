@@ -1,11 +1,19 @@
 #include "FallingWordList.h"
 
 void FallingWordList::dropWord(std::uniform_real_distribution<float> &xDist,
-                                        std::uniform_int_distribution<int> &wordDist,
                                         std::mt19937 &randomNumberGenerator,
                                         const sf::Font &font,
-                                        const WordList &wordList) {
-    Word newWord = wordList.tempWordArray[wordDist(randomNumberGenerator)];
+                                        WordList &wordList) {
+    if (wordList.wordList.empty()) {
+        return;
+    }
+    std::uniform_int_distribution<int> wordDist(0, wordList.getSize() - 1);
+
+    auto it = wordList.wordList.begin();
+    advance(it, wordDist(randomNumberGenerator));
+    Word newWord = *it;
+    wordList.wordList.erase(it);
+
     sf::Vector2f position = {xDist(randomNumberGenerator), 0.f};
     fallingWordList.emplace_back(newWord.getKanji(),
                                  newWord.getKana(),
@@ -14,11 +22,11 @@ void FallingWordList::dropWord(std::uniform_real_distribution<float> &xDist,
                                           position);
 }
 
-void FallingWordList::update(float dt, float speed, float bottomLine, const sf::String& answer, int& points, int& lives) {
+void FallingWordList::update(float dt, float speed, float bottomLine, const sf::String& answer, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound) {
     for (auto word = fallingWordList.begin(); word != fallingWordList.end(); ) {
-        word->fall(dt, speed, bottomLine, points, lives);
+        word->fall(dt, speed, bottomLine, points, lives, correctSound, incorrectSound);
         if (!answer.isEmpty() && (answer == word->getKana() || answer == word->getRomaji())) {
-            word->destroy(true, points, lives);
+            word->destroy(true, points, lives, correctSound, incorrectSound);
         }
         if (word->getShouldDestroy()) {
             word = fallingWordList.erase(word);
@@ -27,4 +35,14 @@ void FallingWordList::update(float dt, float speed, float bottomLine, const sf::
             ++word;
         }
     }
+}
+
+void FallingWordList::drawWords(sf::RenderWindow &window) {
+    for (FallingWord& word : fallingWordList) {
+        word.drawWord(window);
+    }
+}
+
+void FallingWordList::clearWords() {
+    fallingWordList.clear();
 }
