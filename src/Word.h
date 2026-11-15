@@ -1,5 +1,4 @@
-#ifndef CMAKESFMLPROJECT_WORD_H
-#define CMAKESFMLPROJECT_WORD_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <utility>
@@ -23,6 +22,3 @@ private:
     sf::String kana;
     sf::String romaji;
 };
-
-
-#endif //CMAKESFMLPROJECT_WORD_H

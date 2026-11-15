@@ -1,5 +1,4 @@
-#ifndef CMAKESFMLPROJECT_FALLINGWORD_H
-#define CMAKESFMLPROJECT_FALLINGWORD_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -33,6 +32,3 @@ private:
     sf::Text text;
     bool shouldDestroy = false;
 };
-
-
-#endif //CMAKESFMLPROJECT_FALLINGWORD_H

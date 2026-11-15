@@ -1,5 +1,4 @@
-#ifndef CMAKESFMLPROJECT_FALLINGWORDLIST_H
-#define CMAKESFMLPROJECT_FALLINGWORDLIST_H
+#pragma once
 
 #include <list>
 #include <random>
@@ -22,6 +21,3 @@ public:
 private:
     std::list<FallingWord> fallingWordList;
 };
-
-
-#endif //CMAKESFMLPROJECT_FALLINGWORDLIST_H

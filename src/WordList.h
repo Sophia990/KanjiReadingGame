@@ -1,5 +1,4 @@
-#ifndef CMAKESFMLPROJECT_WORDLIST_H
-#define CMAKESFMLPROJECT_WORDLIST_H
+#pragma once
 
 #include <list>
 #include "Word.h"
@@ -11,6 +10,3 @@ public:
 
     std::list<Word> wordList;
 };
-
-
-#endif //CMAKESFMLPROJECT_WORDLIST_H

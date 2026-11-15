@@ -1,5 +1,4 @@
-#ifndef CMAKESFMLPROJECT_BUTTON_H
-#define CMAKESFMLPROJECT_BUTTON_H
+#pragma once
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
@@ -31,6 +30,3 @@ private:
     sf::RectangleShape button;
     sf::Text text;
 };
-
-
-#endif //CMAKESFMLPROJECT_BUTTON_H

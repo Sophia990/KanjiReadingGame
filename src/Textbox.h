@@ -1,5 +1,4 @@
-#ifndef CMAKESFMLPROJECT_TEXTBOX_H
-#define CMAKESFMLPROJECT_TEXTBOX_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "iostream"
@@ -30,5 +29,3 @@ private:
     sf::String getText();
     sf::String handleInput(std::uint32_t unicodeTyped);
 };
-
-#endif //CMAKESFMLPROJECT_TEXTBOX_H
