@@ -18,7 +18,7 @@ void FallingWord::destroy(bool answeredCorrectly, int& points, int& lives, sf::S
         points++;
         correctSound.play();
     } else {
-        lives--;
+        if (lives > 0) lives--;
         incorrectSound.play();
     }
 }
