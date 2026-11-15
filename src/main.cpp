@@ -160,6 +160,7 @@ int main()
 			}
 
 			fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE, currentAnswer, points, lives, correctSound, incorrectSound);
+            currentAnswer = "";
 			pointsText.setString("Points: " + std::to_string(points));
 			livesText.setString("Lives: " + std::to_string(lives));
 
