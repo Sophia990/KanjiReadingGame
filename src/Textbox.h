@@ -17,14 +17,14 @@ public:
     }
 
     void setPosition(sf::Vector2f point);
-    void setLimit(int lim);
+    void setLimit(size_t lim);
     void drawTextbox(sf::RenderWindow &window);
     void clearText();
     sf::String handleTypedOn(const sf::Event& input);
 private:
     sf::Text textbox;
     sf::String text;
-    int limit = 0;
+    std::size_t limit = 0;
 
     sf::String getText();
     sf::String handleInput(std::uint32_t unicodeTyped);
