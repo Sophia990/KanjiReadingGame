@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "iostream"
-#include "sstream"
+#include <cstddef>
+#include <cstdint>
 
 class Textbox {
 public:

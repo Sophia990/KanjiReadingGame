@@ -2,6 +2,10 @@
 #include <random>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <array>
+#include <cstdlib>
+#include <optional>
+#include <string>
 #include "Textbox.h"
 #include "WordList.h"
 #include "FallingWordList.h"

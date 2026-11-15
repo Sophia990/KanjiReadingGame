@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <utility>
 #include "Word.h"
 
 class FallingWord: public Word {

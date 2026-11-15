@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <string>
 #include "Word.h"
 
 class WordList {
