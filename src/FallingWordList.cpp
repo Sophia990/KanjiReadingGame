@@ -1,5 +1,16 @@
 #include "FallingWordList.h"
 
+namespace {
+    sf::String toLowerAscii(sf::String text) {
+        for (char32_t& c : text) {
+            if (c >= U'A' && c <= U'Z') {
+                c += U'a' - U'A';
+            }
+        }
+        return text;
+    }
+}
+
 void FallingWordList::dropWord(std::uniform_real_distribution<float> &xDist,
                                         std::mt19937 &randomNumberGenerator,
                                         const sf::Font &font,
@@ -23,9 +34,10 @@ void FallingWordList::dropWord(std::uniform_real_distribution<float> &xDist,
 }
 
 void FallingWordList::update(float dt, float speed, float bottomLine, const sf::String& answer, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound) {
+    const sf::String loweredAnswer = toLowerAscii(answer);
     for (auto word = fallingWordList.begin(); word != fallingWordList.end(); ) {
         word->fall(dt, speed, bottomLine, points, lives, correctSound, incorrectSound);
-        if (!answer.isEmpty() && (answer == word->getKana() || answer == word->getRomaji())) {
+        if (!loweredAnswer.isEmpty() && (loweredAnswer == word->getKana() || loweredAnswer == word->getRomaji())) {
             word->destroy(true, points, lives, correctSound, incorrectSound);
         }
         if (word->getShouldDestroy()) {
