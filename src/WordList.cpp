@@ -3,13 +3,13 @@
 #include <fstream>
 #include "WordList.h"
 
-void WordList::readCSV(const std::string& filepath) {
+bool WordList::readCSV(const std::string& filepath) {
     std::ifstream fin;
 
     fin.open(filepath, std::ios::in);
     if (!fin.is_open()) {
-        std::cout << "Correct file not found\n";
-        return;
+        std::cerr << "Failed to load file: " << filepath << "\n";
+        return false;
     }
 
     std::string line;
@@ -29,8 +29,10 @@ void WordList::readCSV(const std::string& filepath) {
                                        sf::String::fromUtf8(romaji.begin(), romaji.end()));
         }
     }
+
+    return true;
 }
 
-int WordList::getSize() {
+int WordList::getSize() const {
     return static_cast<int>(wordList.size());
 }

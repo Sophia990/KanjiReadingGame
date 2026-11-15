@@ -24,28 +24,38 @@ int main()
 
 	const float BOTTOM_LINE_Y_COORDINATE = static_cast<float>(window.getSize().y) - 400.f;
 
+	// filepaths
+	const std::string fontPath = "assets/fonts/NotoSansJP-Black.ttf";
+	const std::string correctSoundPath = "assets/audio/correct.wav";
+	const std::string incorrectSoundPath = "assets/audio/incorrect.wav";
+	const std::string musicPath = "assets/audio/music.ogg";
+	const std::string csvPath = "assets/vocab/vocab-n5.csv";
+
 	// points and lives
 	int points = 0;
 	int lives = 5;
 
 	// load font
 	sf::Font font;
-	if (!font.openFromFile("assets/fonts/NotoSansJP-Black.ttf")) std::cout << "Font not found\n";
+	if (!font.openFromFile(fontPath)) {
+		std::cerr << "Failed to load font: " << fontPath << "\n";
+		return EXIT_FAILURE;
+	}
 
 	// for sound effects
 	sf::SoundBuffer correctBuffer;
 	sf::SoundBuffer incorrectBuffer;
-	if (!correctBuffer.loadFromFile("assets/audio/correct.wav"))
-		std::cout << "Correct sound not found\n";
-	if (!incorrectBuffer.loadFromFile("assets/audio/incorrect.wav"))
-		std::cout << "Incorrect sound not found\n";
+	if (!correctBuffer.loadFromFile(correctSoundPath))
+		std::cerr << "Failed to load sound: " << correctSoundPath << "\n";
+	if (!incorrectBuffer.loadFromFile(incorrectSoundPath))
+		std::cerr << "Failed to load sound: " << incorrectSoundPath << "\n";
 	sf::Sound correctSound(correctBuffer);
 	sf::Sound incorrectSound(incorrectBuffer);
 
 	// for music
 	sf::Music music;
-	if (!music.openFromFile("assets/audio/music.ogg"))
-		std::cout << "Correct sound not found\n";
+	if (!music.openFromFile(musicPath))
+		std::cerr << "Failed to load music: " << musicPath << "\n";
 	music.setLooping(true);
 
 	// for words falling on screen
@@ -89,7 +99,7 @@ int main()
 	std::uniform_real_distribution<float> xDist(100.f, static_cast<float>(window.getSize().x) - 100);
 
 	WordList wordList;
-	wordList.readCSV("assets/vocab/vocab-n5.csv");
+	if (!wordList.readCSV(csvPath)) return EXIT_FAILURE;
 
 	FallingWordList fallingWordList;
 
@@ -197,7 +207,7 @@ int main()
 						answerText.clearText();
 						currentAnswer = "";
 						wordList.wordList.clear();
-						wordList.readCSV("assets/vocab/vocab-n5.csv");
+						if (!wordList.readCSV(csvPath)) return EXIT_FAILURE;
 						fallingWordList.clearWords();
 						gameState = START_MENU;
 					}

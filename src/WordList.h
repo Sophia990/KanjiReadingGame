@@ -5,8 +5,8 @@
 
 class WordList {
 public:
-    void readCSV(const std::string& filepath);
-    int getSize();
+    bool readCSV(const std::string& filepath);
+    [[nodiscard]] int getSize() const;
 
     std::list<Word> wordList;
 };
