@@ -21,6 +21,8 @@ int main()
 {
     sf::RenderWindow window( sf::VideoMode::getDesktopMode(), "It's Raining Kanji" );
 
+	window.setVerticalSyncEnabled(true);
+
     window.display();
     window.clear();
 
