@@ -12,6 +12,51 @@
 #include <random>
 #include <string>
 
+namespace {
+    constexpr int startingLives = 5;
+    constexpr int startingPoints = 0;
+    constexpr float baseFallSpeed = 30.f;
+    constexpr float speedIncreasePerPoint = 5.f;
+    constexpr float dropInterval = 2.f;
+
+    constexpr unsigned int textSize = 50;
+    constexpr unsigned int headingTextSize = 200;
+    constexpr unsigned int buttonTextSize = 30;
+
+    constexpr sf::Color textColour = sf::Color::White;
+    constexpr sf::Color buttonColour = sf::Color::Blue;
+
+    constexpr size_t answerTextLimit = 50;
+
+    constexpr float bottomLineOffset = 400.f;
+    constexpr float answerTextboxOffset = 200.f;
+    constexpr float pointsLivesTextOffset = 300.f;
+    constexpr float wordXLimitOffset = 100.f;
+    constexpr float startMenuOffset = 150.f;
+    constexpr float gameOverMenuOffset = 300.f;
+
+    constexpr float buttonHeight = 100.f;
+    constexpr float startButtonWidth = 200.f;
+    constexpr float returnButtonWidth = 300.f;
+
+    const std::string fontPath = "assets/fonts/NotoSansJP-Black.ttf";
+    const std::string correctSoundPath = "assets/audio/correct.wav";
+    const std::string incorrectSoundPath = "assets/audio/incorrect.wav";
+    const std::string musicPath = "assets/audio/music.ogg";
+    const std::string csvPath = "assets/vocab/vocab-n5.csv";
+
+    sf::Text makeCentredText(const sf::Font& font, const sf::String& string, sf::Vector2f position, unsigned int size = textSize, sf::Color colour = textColour) {
+        sf::Text textToReturn(font);
+        textToReturn.setString(string);
+        textToReturn.setCharacterSize(size);
+        textToReturn.setFillColor(colour);
+        textToReturn.setOrigin(textToReturn.getLocalBounds().getCenter());
+        textToReturn.setPosition(position);
+
+        return textToReturn;
+    }
+}
+
 enum class GameState { StartMenu, Playing, GameOver };
 
 int main() {
@@ -25,18 +70,13 @@ int main() {
 
     GameState gameState = GameState::StartMenu;
 
-    const float bottomLineYCoordinate = static_cast<float>(window.getSize().y) - 400.f;
-
-    // filepaths
-    const std::string fontPath = "assets/fonts/NotoSansJP-Black.ttf";
-    const std::string correctSoundPath = "assets/audio/correct.wav";
-    const std::string incorrectSoundPath = "assets/audio/incorrect.wav";
-    const std::string musicPath = "assets/audio/music.ogg";
-    const std::string csvPath = "assets/vocab/vocab-n5.csv";
+    const sf::Vector2f windowSize(window.getSize());
+    const sf::Vector2f centre = windowSize / 2.f;
+    const float bottomLineYCoordinate = windowSize.y - bottomLineOffset;
 
     // points and lives
-    int points = 0;
-    int lives = 5;
+    int points = startingPoints;
+    int lives = startingLives;
 
     // load font
     sf::Font font;
@@ -62,43 +102,40 @@ int main() {
 
     // for words falling on screen
     sf::Clock fallClock;
-    const float baseFallSpeed = 30.f;
-    const float speedIncreasePerPoint = 5.f;
 
     // for spawning words at a time interval
     sf::Clock dropClock;
-    const float dropInterval = 2.f;
 
     // make textbox for answer
-    Textbox answerText(50, sf::Color::White, font);
+    Textbox answerText(textSize, textColour, font);
     answerText.setPosition(
-        {(static_cast<float>(window.getSize().x) / 2.f), static_cast<float>(window.getSize().y) - 200.f});
-    answerText.setLimit(50);
+        {centre.x, windowSize.y - answerTextboxOffset});
+    answerText.setLimit(answerTextLimit);
 
     // make bottom line
     std::array bottomLine = {sf::Vertex{sf::Vector2f(0.f, bottomLineYCoordinate)},
-                             sf::Vertex{sf::Vector2f(static_cast<float>(window.getSize().x), bottomLineYCoordinate)}};
+                             sf::Vertex{sf::Vector2f(windowSize.x, bottomLineYCoordinate)}};
 
     // make points text
     sf::Text pointsText(font);
     pointsText.setString("Points: " + std::to_string(points));
-    pointsText.setCharacterSize(50);
-    pointsText.setFillColor(sf::Color::White);
+    pointsText.setCharacterSize(textSize);
+    pointsText.setFillColor(textColour);
     pointsText.setOrigin({pointsText.getLocalBounds().size.x, 0.f});
     pointsText.setPosition(
-        {static_cast<float>(window.getSize().x) - 300.f, static_cast<float>(window.getSize().y) - 300.f});
+        {windowSize.x - pointsLivesTextOffset, windowSize.y - pointsLivesTextOffset});
 
     // make lives text
     sf::Text livesText(font);
     livesText.setString("Lives: " + std::to_string(lives));
-    livesText.setCharacterSize(50);
-    livesText.setFillColor(sf::Color::White);
-    livesText.setPosition({300.f, static_cast<float>(window.getSize().y) - 300.f});
+    livesText.setCharacterSize(textSize);
+    livesText.setFillColor(textColour);
+    livesText.setPosition({pointsLivesTextOffset, windowSize.y - pointsLivesTextOffset});
 
     // for randomness
     std::random_device rd;
     std::mt19937 randomNumberGenerator(rd());
-    std::uniform_real_distribution<float> xDist(100.f, static_cast<float>(window.getSize().x) - 100);
+    std::uniform_real_distribution<float> xDist(wordXLimitOffset, windowSize.x - wordXLimitOffset);
 
     WordList wordList;
     if (!wordList.readCSV(csvPath)) return EXIT_FAILURE;
@@ -109,53 +146,46 @@ int main() {
     sf::String currentAnswer;
 
     // title text
-    sf::Text titleText(font);
-    titleText.setString("It's Raining Kanji");
-    titleText.setCharacterSize(200);
-    titleText.setFillColor(sf::Color::White);
-    titleText.setOrigin(titleText.getLocalBounds().getCenter());
-    titleText.setPosition(
-        {static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) - 150});
+    sf::Text titleText = makeCentredText(font, "It's Raining Kanji", {centre.x, centre.y - startMenuOffset}, headingTextSize);
 
     // start button
-    Button startButton("Start", {200, 100}, 30, sf::Color::Blue, sf::Color::White, font);
+    Button startButton("Start", {startButtonWidth, buttonHeight}, buttonTextSize, buttonColour, textColour, font);
     startButton.setPosition(
-        {static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) + 150});
+        {centre.x, centre.y + startMenuOffset});
 
     // game over text
-    sf::Text gameOverText(font);
-    gameOverText.setString("Game Over!");
-    gameOverText.setCharacterSize(200);
-    gameOverText.setFillColor(sf::Color::White);
-    gameOverText.setOrigin(gameOverText.getLocalBounds().getCenter());
-    gameOverText.setPosition(
-        {static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) - 300});
+    sf::Text gameOverText = makeCentredText(font, "Game Over!", {centre.x, centre.y - gameOverMenuOffset}, headingTextSize);
 
     // final points text
-    sf::Text finalPointsText(font);
-    finalPointsText.setString("Points: " + std::to_string(points));
-    finalPointsText.setCharacterSize(200);
-    finalPointsText.setFillColor(sf::Color::White);
-    finalPointsText.setOrigin(finalPointsText.getLocalBounds().getCenter());
-    finalPointsText.setPosition(
-        {static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f)});
+    sf::Text finalPointsText = makeCentredText(font, "Points: " + std::to_string(points), {centre.x, centre.y}, headingTextSize);
 
     // return to menu button
-    Button returnToMenuButton("Return to Menu", {300, 100}, 30, sf::Color::Blue, sf::Color::White, font);
+    Button returnToMenuButton("Return to Menu", {returnButtonWidth, buttonHeight}, buttonTextSize, buttonColour, textColour, font);
     returnToMenuButton.setPosition(
-        {static_cast<float>(window.getSize().x) / 2.f, (static_cast<float>(window.getSize().y) / 2.f) + 300});
+        {centre.x, centre.y + gameOverMenuOffset});
+
+    auto startGame = [&]() {
+        fallClock.restart();
+        dropClock.restart();
+        music.play();
+        gameState = GameState::Playing;
+    };
+
+    auto resetGame = [&]() {
+        points = startingPoints;
+        lives = startingLives;
+        answerText.clearText();
+        wordList.reset(randomNumberGenerator);
+        fallingWordList.clearWords();
+        gameState = GameState::StartMenu;
+    };
 
     while (window.isOpen()) {
         while (window.isOpen() && gameState == GameState::StartMenu) {
             while (const std::optional event = window.pollEvent()) {
                 if (event->is<sf::Event::Closed>()) window.close();
                 if (event->is<sf::Event::MouseButtonPressed>())
-                    if (startButton.isMouseOver(window)) {
-                        fallClock.restart();
-                        dropClock.restart();
-                        music.play();
-                        gameState = GameState::Playing;
-                    }
+                    if (startButton.isMouseOver(window)) startGame();
             }
 
             window.clear();
@@ -209,15 +239,7 @@ int main() {
             while (const std::optional event = window.pollEvent()) {
                 if (event->is<sf::Event::Closed>()) window.close();
                 if (event->is<sf::Event::MouseButtonPressed>())
-                    if (returnToMenuButton.isMouseOver(window)) {
-                        // reset game variables
-                        points = 0;
-                        lives = 5;
-                        answerText.clearText();
-                        wordList.reset(randomNumberGenerator);
-                        fallingWordList.clearWords();
-                        gameState = GameState::StartMenu;
-                    }
+                    if (returnToMenuButton.isMouseOver(window)) resetGame();
             }
 
             window.clear();
