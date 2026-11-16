@@ -9,13 +9,17 @@ namespace {
 
 sf::String Textbox::handleInput(char32_t unicodeTyped) {
     sf::String answerToReturn;
+    // pressing backspace deletes one character
     if (unicodeTyped == backspaceKey) {
         if (!text.isEmpty()) { text.erase(text.getSize() - 1); }
+        // pressing enter submits answer and clears
     } else if (unicodeTyped == enterKey) {
         answerToReturn = text;
         clearText();
+        // pressing delete clears the answer
     } else if (unicodeTyped == deleteKey) {
         clearText();
+        // no other control characters recognised
     } else if (unicodeTyped >= minimumKey) {
         text += unicodeTyped;
     }

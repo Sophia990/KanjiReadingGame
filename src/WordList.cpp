@@ -24,6 +24,7 @@ bool WordList::readCSV(const std::string& filepath) {
         std::getline(ss, reading, ',');
         std::getline(ss, romaji, ',');
 
+        // skip words with no kanji by skipping rows with equal values in kanji and reading columns
         if (kanji != reading) {
             allWords.emplace_back(sf::String::fromUtf8(kanji.begin(), kanji.end()),
                                   sf::String::fromUtf8(reading.begin(), reading.end()),

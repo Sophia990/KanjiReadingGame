@@ -5,21 +5,26 @@
 #include <stdexcept>
 
 namespace {
+    // game balancing constants
     constexpr int startingLives = 5;
     constexpr int startingPoints = 0;
     constexpr float baseFallSpeed = 30.f;
     constexpr float speedIncreasePerPoint = 5.f;
     constexpr float dropInterval = 2.f;
 
+    // text sizes
     constexpr unsigned int textSize = 50;
     constexpr unsigned int headingTextSize = 200;
     constexpr unsigned int buttonTextSize = 30;
 
+    // colours
     constexpr sf::Color textColour = sf::Color::White;
     constexpr sf::Color buttonColour = sf::Color::Blue;
 
+    // maximum characters in answer textbox
     constexpr size_t answerTextLimit = 50;
 
+    // UI element offsets for positioning
     constexpr float bottomLineOffset = 400.f;
     constexpr float answerTextboxOffset = 200.f;
     constexpr float pointsLivesTextOffset = 300.f;
@@ -27,10 +32,12 @@ namespace {
     constexpr float startMenuOffset = 150.f;
     constexpr float gameOverMenuOffset = 300.f;
 
+    // button dimensions
     constexpr float buttonHeight = 100.f;
     constexpr float startButtonWidth = 200.f;
     constexpr float returnButtonWidth = 300.f;
 
+    // filepaths
     const std::string fontPath = "assets/fonts/NotoSansJP-Black.ttf";
     const std::string correctSoundPath = "assets/audio/correct.wav";
     const std::string incorrectSoundPath = "assets/audio/incorrect.wav";

@@ -9,4 +9,5 @@ void FallingWord::fall(float dt, float speed) {
 
 bool FallingWord::hasReachedBottom(float bottomY) const { return position.y >= bottomY; }
 
+// accept answer in kana (japanese phonetic syllabaries) or romaji (transliteration of japanese into latin alphabet)
 bool FallingWord::matches(const sf::String& answer) const { return (answer == getKana() || answer == getRomaji()); }

@@ -9,7 +9,7 @@ public:
     Textbox(unsigned int characterSize, sf::Color colour, const sf::Font& font) : textbox(font) {
         textbox.setCharacterSize(characterSize);
         textbox.setFillColor(colour);
-        textbox.setString("_");
+        textbox.setString("_"); // '_' shows where next character will be typed
         textbox.setOrigin(textbox.getLocalBounds().getCenter());
     }
 

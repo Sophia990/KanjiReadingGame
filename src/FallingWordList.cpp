@@ -1,6 +1,7 @@
 #include "FallingWordList.h"
 
 namespace {
+    // ensure that romaji answers are case-insensitive
     sf::String toLowerAscii(sf::String text) {
         for (char32_t& c : text) {
             if (c >= U'A' && c <= U'Z') { c += U'a' - U'A'; }
@@ -19,6 +20,7 @@ void FallingWordList::dropWord(std::uniform_real_distribution<float>& xDist,
     }
 }
 
+// returns number of lives lost
 int FallingWordList::update(float dt, float speed, float bottomY) {
     for (FallingWord& word : fallingWords) { word.fall(dt, speed); }
 
@@ -27,6 +29,7 @@ int FallingWordList::update(float dt, float speed, float bottomY) {
     return static_cast<int>(before - fallingWords.size());
 }
 
+// returns number of points earned
 int FallingWordList::submitAnswer(const sf::String& answer) {
     const sf::String loweredAnswer = toLowerAscii(answer);
     if (loweredAnswer.isEmpty()) return 0;
