@@ -13,16 +13,10 @@ void FallingWordList::dropWord(std::uniform_real_distribution<float>& xDist,
                                std::mt19937& randomNumberGenerator,
                                const sf::Font& font,
                                WordList& wordList) {
-    if (wordList.words.empty()) { return; }
-    std::uniform_int_distribution<std::size_t> wordDist(0, wordList.getSize() - 1);
-
-    auto it = wordList.words.begin();
-    std::advance(it, wordDist(randomNumberGenerator));
-    Word newWord = std::move(*it);
-    wordList.words.erase(it);
-
-    sf::Vector2f position = {xDist(randomNumberGenerator), 0.f};
-    fallingWords.emplace_back(newWord.getKanji(), newWord.getKana(), newWord.getRomaji(), font, position);
+    if (auto newWord = wordList.takeWord()) {
+        const sf::Vector2f position = {xDist(randomNumberGenerator), 0.f};
+        fallingWords.emplace_back(newWord->getKanji(), newWord->getKana(), newWord->getRomaji(), font, position);
+    }
 }
 
 void FallingWordList::update(float dt,

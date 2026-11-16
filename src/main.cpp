@@ -100,6 +100,7 @@ int main() {
 
     WordList wordList;
     if (!wordList.readCSV(csvPath)) return EXIT_FAILURE;
+    wordList.reset(randomNumberGenerator);
 
     FallingWordList fallingWordList;
 
@@ -202,8 +203,7 @@ int main() {
                         lives = 5;
                         answerText.clearText();
                         currentAnswer = "";
-                        wordList.words.clear();
-                        if (!wordList.readCSV(csvPath)) return EXIT_FAILURE;
+                        wordList.reset(randomNumberGenerator);
                         fallingWordList.clearWords();
                         gameState = GameState::StartMenu;
                     }

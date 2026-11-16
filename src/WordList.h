@@ -3,12 +3,18 @@
 #include "Word.h"
 #include <cstddef>
 #include <list>
+#include <random>
 #include <string>
+#include <optional>
+#include <vector>
 
 class WordList {
 public:
     bool readCSV(const std::string& filepath);
-    [[nodiscard]] std::size_t getSize() const;
+    void reset(std::mt19937& randomNumberGenerator);
+    std::optional<Word> takeWord();
 
-    std::list<Word> words;
+private:
+    std::vector<Word> allWords;
+    std::vector<Word> remainingWords;
 };

@@ -1,4 +1,5 @@
 #include "WordList.h"
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -24,7 +25,7 @@ bool WordList::readCSV(const std::string& filepath) {
         std::getline(ss, romaji, ',');
 
         if (kanji != reading) {
-            words.emplace_back(sf::String::fromUtf8(kanji.begin(), kanji.end()),
+            allWords.emplace_back(sf::String::fromUtf8(kanji.begin(), kanji.end()),
                                sf::String::fromUtf8(reading.begin(), reading.end()),
                                sf::String::fromUtf8(romaji.begin(), romaji.end()));
         }
@@ -33,4 +34,16 @@ bool WordList::readCSV(const std::string& filepath) {
     return true;
 }
 
-std::size_t WordList::getSize() const { return words.size(); }
+void WordList::reset(std::mt19937& randomNumberGenerator) {
+    remainingWords = allWords;
+    std::shuffle(remainingWords.begin(), remainingWords.end(), randomNumberGenerator);
+}
+
+std::optional<Word> WordList::takeWord() {
+    if (remainingWords.empty()) {
+        return std::nullopt;
+    }
+    Word word = std::move(remainingWords.back());
+    remainingWords.pop_back();
+    return word;
+}
