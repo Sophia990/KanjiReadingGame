@@ -26,6 +26,8 @@ add_executable(ItsRainingKanji src/main.cpp
         src/FallingWordList.h
         src/Button.cpp
         src/Button.h
+        src/Game.cpp
+        src/Game.h
 )
 target_compile_features(ItsRainingKanji PRIVATE cxx_std_17)
 
