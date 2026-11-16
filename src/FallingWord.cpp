@@ -7,10 +7,6 @@ void FallingWord::fall(float dt, float speed) {
     text.setPosition(position);
 }
 
-bool FallingWord::hasReachedBottom(float bottomY) const {
-    return position.y >= bottomY;
-}
+bool FallingWord::hasReachedBottom(float bottomY) const { return position.y >= bottomY; }
 
-bool FallingWord::matches(const sf::String& answer) const {
-    return (answer == getKana() || answer == getRomaji());
-}
+bool FallingWord::matches(const sf::String& answer) const { return (answer == getKana() || answer == getRomaji()); }
