@@ -3,21 +3,17 @@
 namespace {
     sf::String toLowerAscii(sf::String text) {
         for (char32_t& c : text) {
-            if (c >= U'A' && c <= U'Z') {
-                c += U'a' - U'A';
-            }
+            if (c >= U'A' && c <= U'Z') { c += U'a' - U'A'; }
         }
         return text;
     }
-}
+} // namespace
 
-void FallingWordList::dropWord(std::uniform_real_distribution<float> &xDist,
-                                        std::mt19937 &randomNumberGenerator,
-                                        const sf::Font &font,
-                                        WordList &wordList) {
-    if (wordList.words.empty()) {
-        return;
-    }
+void FallingWordList::dropWord(std::uniform_real_distribution<float>& xDist,
+                               std::mt19937& randomNumberGenerator,
+                               const sf::Font& font,
+                               WordList& wordList) {
+    if (wordList.words.empty()) { return; }
     std::uniform_int_distribution<std::size_t> wordDist(0, wordList.getSize() - 1);
 
     auto it = wordList.words.begin();
@@ -26,35 +22,33 @@ void FallingWordList::dropWord(std::uniform_real_distribution<float> &xDist,
     wordList.words.erase(it);
 
     sf::Vector2f position = {xDist(randomNumberGenerator), 0.f};
-    fallingWords.emplace_back(newWord.getKanji(),
-                              newWord.getKana(),
-                              newWord.getRomaji(),
-                              font,
-                              position);
+    fallingWords.emplace_back(newWord.getKanji(), newWord.getKana(), newWord.getRomaji(), font, position);
 }
 
-void FallingWordList::update(float dt, float speed, float bottomLine, const sf::String& answer, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound) {
+void FallingWordList::update(float dt,
+                             float speed,
+                             float bottomLine,
+                             const sf::String& answer,
+                             int& points,
+                             int& lives,
+                             sf::Sound& correctSound,
+                             sf::Sound& incorrectSound) {
     const sf::String loweredAnswer = toLowerAscii(answer);
-    for (auto word = fallingWords.begin(); word != fallingWords.end(); ) {
+    for (auto word = fallingWords.begin(); word != fallingWords.end();) {
         word->fall(dt, speed, bottomLine, points, lives, correctSound, incorrectSound);
         if (!loweredAnswer.isEmpty() && (loweredAnswer == word->getKana() || loweredAnswer == word->getRomaji())) {
             word->destroy(true, points, lives, correctSound, incorrectSound);
         }
         if (word->getShouldDestroy()) {
             word = fallingWords.erase(word);
-        }
-        else {
+        } else {
             ++word;
         }
     }
 }
 
 void FallingWordList::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (const FallingWord& word : fallingWords) {
-        target.draw(word, states);
-    }
+    for (const FallingWord& word : fallingWords) { target.draw(word, states); }
 }
 
-void FallingWordList::clearWords() {
-    fallingWords.clear();
-}
+void FallingWordList::clearWords() { fallingWords.clear(); }

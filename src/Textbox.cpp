@@ -5,23 +5,18 @@ namespace {
     constexpr char32_t enterKey = U'\r';
     constexpr char32_t minimumKey = 0x20;
     constexpr char32_t deleteKey = 0x7F;
-}
+} // namespace
 
 sf::String Textbox::handleInput(char32_t unicodeTyped) {
     sf::String answerToReturn;
     if (unicodeTyped == backspaceKey) {
-        if (!text.isEmpty()) {
-            text.erase(text.getSize() - 1);
-        }
-    }
-    else if (unicodeTyped == enterKey) {
+        if (!text.isEmpty()) { text.erase(text.getSize() - 1); }
+    } else if (unicodeTyped == enterKey) {
         answerToReturn = text;
         clearText();
-    }
-    else if (unicodeTyped == deleteKey) {
+    } else if (unicodeTyped == deleteKey) {
         clearText();
-    }
-    else if (unicodeTyped >= minimumKey) {
+    } else if (unicodeTyped >= minimumKey) {
         text += unicodeTyped;
     }
     textbox.setString(text + "_");
@@ -29,17 +24,11 @@ sf::String Textbox::handleInput(char32_t unicodeTyped) {
     return answerToReturn;
 }
 
-void Textbox::setPosition(sf::Vector2f point) {
-    textbox.setPosition(point);
-}
+void Textbox::setPosition(sf::Vector2f point) { textbox.setPosition(point); }
 
-void Textbox::setLimit(std::size_t lim) {
-    limit = lim;
-}
+void Textbox::setLimit(std::size_t lim) { limit = lim; }
 
-void Textbox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    target.draw(textbox, states);
-}
+void Textbox::draw(sf::RenderTarget& target, sf::RenderStates states) const { target.draw(textbox, states); }
 
 void Textbox::clearText() {
     text = "";

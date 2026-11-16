@@ -6,10 +6,7 @@
 
 class Textbox : public sf::Drawable {
 public:
-    Textbox(
-            unsigned int characterSize,
-            sf::Color colour,
-            const sf::Font& font) : textbox(font) {
+    Textbox(unsigned int characterSize, sf::Color colour, const sf::Font& font) : textbox(font) {
         textbox.setCharacterSize(characterSize);
         textbox.setFillColor(colour);
         textbox.setString("_");
@@ -20,6 +17,7 @@ public:
     void setLimit(std::size_t lim);
     void clearText();
     sf::String handleTypedOn(const sf::Event& input);
+
 private:
     sf::Text textbox;
     sf::String text;

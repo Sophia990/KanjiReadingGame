@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Word.h"
+#include <cstddef>
 #include <list>
 #include <string>
-#include <cstddef>
-#include "Word.h"
 
 class WordList {
 public:

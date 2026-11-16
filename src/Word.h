@@ -4,14 +4,11 @@
 #include <utility>
 
 class Word {
-
 public:
-    Word(sf::String kanji,
-         sf::String kana,
-         sf::String romaji)
-         : kanji(std::move(kanji)),
-           kana(std::move(kana)),
-           romaji(std::move(romaji)) {}
+    Word(sf::String kanji, sf::String kana, sf::String romaji)
+        : kanji(std::move(kanji)),
+          kana(std::move(kana)),
+          romaji(std::move(romaji)) {}
 
     const sf::String& getKanji() const;
     const sf::String& getKana() const;

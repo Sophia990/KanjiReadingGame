@@ -3,14 +3,14 @@
 #include <SFML/Graphics.hpp>
 
 class Button : public sf::Drawable {
-
 public:
     Button(const sf::String& buttonText,
            sf::Vector2f buttonSize,
            unsigned int charSize,
            sf::Color backgroundColour,
            sf::Color textColour,
-           const sf::Font &font) : text(font) {
+           const sf::Font& font)
+        : text(font) {
         button.setSize(buttonSize);
         button.setFillColor(backgroundColour);
 

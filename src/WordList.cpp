@@ -1,7 +1,7 @@
+#include "WordList.h"
+#include <fstream>
 #include <iostream>
 #include <sstream>
-#include <fstream>
-#include "WordList.h"
 
 bool WordList::readCSV(const std::string& filepath) {
     std::ifstream fin;
@@ -15,7 +15,7 @@ bool WordList::readCSV(const std::string& filepath) {
     std::string line;
     std::getline(fin, line);
 
-    while(std::getline(fin, line)) {
+    while (std::getline(fin, line)) {
         std::stringstream ss(line);
         std::string id, kanji, reading, romaji;
         std::getline(ss, id, ',');
@@ -33,6 +33,4 @@ bool WordList::readCSV(const std::string& filepath) {
     return true;
 }
 
-std::size_t WordList::getSize() const {
-    return words.size();
-}
+std::size_t WordList::getSize() const { return words.size(); }
