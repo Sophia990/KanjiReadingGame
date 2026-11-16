@@ -125,76 +125,95 @@ Game::Game()
 
 void Game::run() {
     while (window.isOpen()) {
-        while (window.isOpen() && state == State::StartMenu) {
-            while (const std::optional event = window.pollEvent()) {
-                if (event->is<sf::Event::Closed>()) window.close();
-                if (event->is<sf::Event::MouseButtonPressed>())
-                    if (startButton.isMouseOver(window)) startGame();
+        processEvents();
+        update();
+        render();
+    }
+}
+
+void Game::processEvents() {
+    while (const std::optional event = window.pollEvent()) {
+        if (event->is<sf::Event::Closed>()) window.close();
+
+        switch (state) {
+        case State::StartMenu:
+            if (event->is<sf::Event::MouseButtonPressed>()) {
+                if (startButton.isMouseOver(window)) startGame();
             }
+            break;
 
-            window.clear();
-            window.draw(titleText);
-            window.draw(startButton);
-            window.display();
-        }
-
-        while (window.isOpen() && lives > 0 && state == State::Playing) {
-            float dt = fallClock.restart().asSeconds();
-
-            if (dropClock.getElapsedTime().asSeconds() >= dropInterval) {
-                fallingWordList.dropWord(xDist, randomNumberGenerator, font, wordList);
-                dropClock.restart();
-            }
-
-            const float currentFallSpeed = baseFallSpeed + static_cast<float>(points) * speedIncreasePerPoint;
-            if (const int missed = fallingWordList.update(dt, currentFallSpeed, bottomLineYCoordinate); missed > 0) {
-                lives = std::max(0, lives - missed);
-                incorrectSound.play();
-            }
-            pointsText.setString("Points: " + std::to_string(points));
-            livesText.setString("Lives: " + std::to_string(lives));
-
-            while (const std::optional event = window.pollEvent()) {
-                if (event->is<sf::Event::Closed>()) window.close();
-                if (event->is<sf::Event::TextEntered>()) {
-                    const sf::String answer = answerText.handleTypedOn(*event);
-                    if (!answer.isEmpty()) {
-                        if (const int correct = fallingWordList.submitAnswer(answer); correct > 0) {
-                            points += correct;
-                            correctSound.play();
-                        }
+        case State::Playing:
+            if (event->is<sf::Event::TextEntered>()) {
+                const sf::String answer = answerText.handleTypedOn(*event);
+                if (!answer.isEmpty()) {
+                    if (const int correct = fallingWordList.submitAnswer(answer); correct > 0) {
+                        points += correct;
+                        correctSound.play();
                     }
                 }
             }
+            break;
 
-            window.clear();
-            window.draw(answerText);
-            window.draw(pointsText);
-            window.draw(livesText);
-            window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
-            window.draw(fallingWordList);
-            window.display();
-        }
-
-        state = State::GameOver;
-        music.stop();
-
-        while (window.isOpen() && state == State::GameOver) {
-            while (const std::optional event = window.pollEvent()) {
-                if (event->is<sf::Event::Closed>()) window.close();
-                if (event->is<sf::Event::MouseButtonPressed>())
-                    if (returnToMenuButton.isMouseOver(window)) resetGame();
+        case State::GameOver:
+            if (event->is<sf::Event::MouseButtonPressed>()) {
+                if (returnToMenuButton.isMouseOver(window)) resetGame();
             }
-
-            window.clear();
-            finalPointsText.setString("Points: " + std::to_string(points));
-            finalPointsText.setOrigin(finalPointsText.getLocalBounds().getCenter());
-            window.draw(gameOverText);
-            window.draw(finalPointsText);
-            window.draw(returnToMenuButton);
-            window.display();
+            break;
         }
     }
+}
+
+void Game::update() {
+    if (state != State::Playing) return;
+
+    float dt = fallClock.restart().asSeconds();
+
+    if (dropClock.getElapsedTime().asSeconds() >= dropInterval) {
+        fallingWordList.dropWord(xDist, randomNumberGenerator, font, wordList);
+        dropClock.restart();
+    }
+
+    const float currentFallSpeed = baseFallSpeed + static_cast<float>(points) * speedIncreasePerPoint;
+    if (const int missed = fallingWordList.update(dt, currentFallSpeed, bottomLineYCoordinate); missed > 0) {
+        lives = std::max(0, lives - missed);
+        incorrectSound.play();
+    }
+    pointsText.setString("Points: " + std::to_string(points));
+    livesText.setString("Lives: " + std::to_string(lives));
+
+    if (lives == 0) {
+        state = State::GameOver;
+        music.stop();
+        finalPointsText.setString("Points: " + std::to_string(points));
+        finalPointsText.setOrigin(finalPointsText.getLocalBounds().getCenter());
+    }
+}
+
+void Game::render() {
+    window.clear();
+
+    switch (state) {
+    case State::StartMenu:
+        window.draw(titleText);
+        window.draw(startButton);
+        break;
+
+    case State::Playing:
+        window.draw(answerText);
+        window.draw(pointsText);
+        window.draw(livesText);
+        window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
+        window.draw(fallingWordList);
+        break;
+
+    case State::GameOver:
+        window.draw(gameOverText);
+        window.draw(finalPointsText);
+        window.draw(returnToMenuButton);
+        break;
+    }
+
+    window.display();
 }
 
 void Game::startGame() {
