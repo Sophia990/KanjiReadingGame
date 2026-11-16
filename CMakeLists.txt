@@ -28,6 +28,13 @@ add_executable(ItsRainingKanji src/main.cpp
         src/Button.h
 )
 target_compile_features(ItsRainingKanji PRIVATE cxx_std_17)
+
+if (MSVC)
+    target_compile_options(ItsRainingKanji PRIVATE /W4 /permissive-)
+else()
+    target_compile_options(ItsRainingKanji PRIVATE -Wall -Wextra -Wpedantic -Wconversion)
+endif ()
+
 target_link_libraries(ItsRainingKanji PRIVATE SFML::Graphics SFML::Audio)
 
 add_custom_command(TARGET ItsRainingKanji POST_BUILD
