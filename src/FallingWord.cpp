@@ -2,28 +2,15 @@
 
 void FallingWord::draw(sf::RenderTarget& target, sf::RenderStates states) const { target.draw(text, states); }
 
-void FallingWord::fall(float dt,
-                       float speed,
-                       float bottomLine,
-                       int& points,
-                       int& lives,
-                       sf::Sound& correctSound,
-                       sf::Sound& incorrectSound) {
-    position.y += (speed + (static_cast<float>(points)) * 5) * dt;
+void FallingWord::fall(float dt, float speed) {
+    position.y += speed * dt;
     text.setPosition(position);
-    if (position.y >= bottomLine) { destroy(false, points, lives, correctSound, incorrectSound); }
 }
 
-void FallingWord::destroy(
-    bool answeredCorrectly, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound) {
-    shouldDestroy = true;
-    if (answeredCorrectly) {
-        points++;
-        correctSound.play();
-    } else {
-        if (lives > 0) lives--;
-        incorrectSound.play();
-    }
+bool FallingWord::hasReachedBottom(float bottomY) const {
+    return position.y >= bottomY;
 }
 
-bool FallingWord::getShouldDestroy() const { return shouldDestroy; }
+bool FallingWord::matches(const sf::String& answer) const {
+    return (answer == getKana() || answer == getRomaji());
+}

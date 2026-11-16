@@ -10,9 +10,9 @@ public:
           kana(std::move(kana)),
           romaji(std::move(romaji)) {}
 
-    const sf::String& getKanji() const;
-    const sf::String& getKana() const;
-    const sf::String& getRomaji() const;
+    [[nodiscard]] const sf::String& getKanji() const;
+    [[nodiscard]] const sf::String& getKana() const;
+    [[nodiscard]] const sf::String& getRomaji() const;
 
 private:
     sf::String kanji;

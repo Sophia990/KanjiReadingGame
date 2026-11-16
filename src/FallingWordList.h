@@ -12,14 +12,9 @@ public:
                   const sf::Font& font,
                   WordList& wordList);
 
-    void update(float dt,
-                float speed,
-                float bottomLine,
-                const sf::String& answer,
-                int& points,
-                int& lives,
-                sf::Sound& correctSound,
-                sf::Sound& incorrectSound);
+    int update(float dt, float speed, float bottomY);
+
+    int submitAnswer(const sf::String& answer);
 
     void clearWords();
 

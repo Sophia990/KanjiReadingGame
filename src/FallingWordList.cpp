@@ -19,26 +19,21 @@ void FallingWordList::dropWord(std::uniform_real_distribution<float>& xDist,
     }
 }
 
-void FallingWordList::update(float dt,
-                             float speed,
-                             float bottomLine,
-                             const sf::String& answer,
-                             int& points,
-                             int& lives,
-                             sf::Sound& correctSound,
-                             sf::Sound& incorrectSound) {
+int FallingWordList::update(float dt, float speed, float bottomY) {
+    for (FallingWord& word : fallingWords) { word.fall(dt, speed); }
+
+    const auto before = fallingWords.size();
+    fallingWords.remove_if([bottomY](const FallingWord& word) { return word.hasReachedBottom(bottomY); });
+    return static_cast<int>(before - fallingWords.size());
+}
+
+int FallingWordList::submitAnswer(const sf::String& answer) {
     const sf::String loweredAnswer = toLowerAscii(answer);
-    for (auto word = fallingWords.begin(); word != fallingWords.end();) {
-        word->fall(dt, speed, bottomLine, points, lives, correctSound, incorrectSound);
-        if (!loweredAnswer.isEmpty() && (loweredAnswer == word->getKana() || loweredAnswer == word->getRomaji())) {
-            word->destroy(true, points, lives, correctSound, incorrectSound);
-        }
-        if (word->getShouldDestroy()) {
-            word = fallingWords.erase(word);
-        } else {
-            ++word;
-        }
-    }
+    if (loweredAnswer.isEmpty()) return 0;
+
+    const auto before = fallingWords.size();
+    fallingWords.remove_if([&loweredAnswer](const FallingWord& word) { return word.matches(loweredAnswer); });
+    return static_cast<int>(before - fallingWords.size());
 }
 
 void FallingWordList::draw(sf::RenderTarget& target, sf::RenderStates states) const {

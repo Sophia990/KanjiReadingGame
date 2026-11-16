@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Word.h"
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <utility>
 
@@ -18,19 +17,12 @@ public:
         text.setPosition(position);
     }
 
-    bool getShouldDestroy() const;
-    void fall(float dt,
-              float speed,
-              float bottomLine,
-              int& points,
-              int& lives,
-              sf::Sound& correctSound,
-              sf::Sound& incorrectSound);
-    void destroy(bool answeredCorrectly, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound);
+    void fall(float dt, float speed);
+    bool hasReachedBottom(float bottomY) const;
+    bool matches(const sf::String& answer) const;
 
 private:
     sf::Text text;
-    bool shouldDestroy = false;
     sf::Vector2f position;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

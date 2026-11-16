@@ -4,6 +4,7 @@
 #include "WordList.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <algorithm>
 #include <array>
 #include <cstdlib>
 #include <iostream>
@@ -61,7 +62,8 @@ int main() {
 
     // for words falling on screen
     sf::Clock fallClock;
-    const float fallSpeed = 30.f;
+    const float baseFallSpeed = 30.f;
+    const float speedIncreasePerPoint = 5.f;
 
     // for spawning words at a time interval
     sf::Clock dropClock;
@@ -170,15 +172,25 @@ int main() {
                 dropClock.restart();
             }
 
-            fallingWordList.update(
-                dt, fallSpeed, bottomLineYCoordinate, currentAnswer, points, lives, correctSound, incorrectSound);
-            currentAnswer = "";
+            const float currentFallSpeed = baseFallSpeed + static_cast<float>(points) * speedIncreasePerPoint;
+            if (const int missed = fallingWordList.update(dt, currentFallSpeed, bottomLineYCoordinate); missed > 0) {
+                lives = std::max(0, lives - missed);
+                incorrectSound.play();
+            }
             pointsText.setString("Points: " + std::to_string(points));
             livesText.setString("Lives: " + std::to_string(lives));
 
             while (const std::optional event = window.pollEvent()) {
                 if (event->is<sf::Event::Closed>()) window.close();
-                if (event->is<sf::Event::TextEntered>()) currentAnswer = answerText.handleTypedOn(*event);
+                if (event->is<sf::Event::TextEntered>()) {
+                    const sf::String answer = answerText.handleTypedOn(*event);
+                    if (!answer.isEmpty()) {
+                        if (const int correct = fallingWordList.submitAnswer(answer); correct > 0) {
+                            points += correct;
+                            correctSound.play();
+                        }
+                    }
+                }
             }
 
             window.clear();
@@ -202,7 +214,6 @@ int main() {
                         points = 0;
                         lives = 5;
                         answerText.clearText();
-                        currentAnswer = "";
                         wordList.reset(randomNumberGenerator);
                         fallingWordList.clearWords();
                         gameState = GameState::StartMenu;
