@@ -3,9 +3,9 @@
 #include "Word.h"
 #include <cstddef>
 #include <list>
+#include <optional>
 #include <random>
 #include <string>
-#include <optional>
 #include <vector>
 
 class WordList {

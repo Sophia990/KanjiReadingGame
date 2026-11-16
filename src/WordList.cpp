@@ -26,8 +26,8 @@ bool WordList::readCSV(const std::string& filepath) {
 
         if (kanji != reading) {
             allWords.emplace_back(sf::String::fromUtf8(kanji.begin(), kanji.end()),
-                               sf::String::fromUtf8(reading.begin(), reading.end()),
-                               sf::String::fromUtf8(romaji.begin(), romaji.end()));
+                                  sf::String::fromUtf8(reading.begin(), reading.end()),
+                                  sf::String::fromUtf8(romaji.begin(), romaji.end()));
         }
     }
 
@@ -40,9 +40,7 @@ void WordList::reset(std::mt19937& randomNumberGenerator) {
 }
 
 std::optional<Word> WordList::takeWord() {
-    if (remainingWords.empty()) {
-        return std::nullopt;
-    }
+    if (remainingWords.empty()) { return std::nullopt; }
     Word word = std::move(remainingWords.back());
     remainingWords.pop_back();
     return word;
