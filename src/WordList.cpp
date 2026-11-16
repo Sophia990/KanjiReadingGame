@@ -24,15 +24,15 @@ bool WordList::readCSV(const std::string& filepath) {
         std::getline(ss, romaji, ',');
 
         if (kanji != reading) {
-            wordList.emplace_back(sf::String::fromUtf8(kanji.begin(), kanji.end()),
-                                       sf::String::fromUtf8(reading.begin(), reading.end()),
-                                       sf::String::fromUtf8(romaji.begin(), romaji.end()));
+            words.emplace_back(sf::String::fromUtf8(kanji.begin(), kanji.end()),
+                               sf::String::fromUtf8(reading.begin(), reading.end()),
+                               sf::String::fromUtf8(romaji.begin(), romaji.end()));
         }
     }
 
     return true;
 }
 
-int WordList::getSize() const {
-    return static_cast<int>(wordList.size());
+std::size_t WordList::getSize() const {
+    return words.size();
 }

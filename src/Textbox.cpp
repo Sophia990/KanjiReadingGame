@@ -1,30 +1,28 @@
 #include "Textbox.h"
 
-#define BACKSPACE_KEY 8
-#define ENTER_KEY 13
-#define MINIMUM_KEY 32
-#define DELETE_KEY 127
-
-sf::String Textbox::getText() {
-    return text;
+namespace {
+    constexpr char32_t backspaceKey = U'\b';
+    constexpr char32_t enterKey = U'\r';
+    constexpr char32_t minimumKey = 0x20;
+    constexpr char32_t deleteKey = 0x7F;
 }
 
-sf::String Textbox::handleInput(std::uint32_t unicodeTyped) {
-    sf::String answerToReturn = "";
-    if (unicodeTyped == BACKSPACE_KEY) {
+sf::String Textbox::handleInput(char32_t unicodeTyped) {
+    sf::String answerToReturn;
+    if (unicodeTyped == backspaceKey) {
         if (!text.isEmpty()) {
             text.erase(text.getSize() - 1);
         }
     }
-    else if (unicodeTyped == ENTER_KEY) {
+    else if (unicodeTyped == enterKey) {
         answerToReturn = text;
         clearText();
     }
-    else if (unicodeTyped == DELETE_KEY) {
+    else if (unicodeTyped == deleteKey) {
         clearText();
     }
-    else if (unicodeTyped >= MINIMUM_KEY) {
-        text += static_cast<char32_t>(unicodeTyped);
+    else if (unicodeTyped >= minimumKey) {
+        text += unicodeTyped;
     }
     textbox.setString(text + "_");
     textbox.setOrigin(textbox.getLocalBounds().getCenter());
@@ -35,12 +33,12 @@ void Textbox::setPosition(sf::Vector2f point) {
     textbox.setPosition(point);
 }
 
-void Textbox::setLimit(size_t lim) {
+void Textbox::setLimit(std::size_t lim) {
     limit = lim;
 }
 
-void Textbox::drawTextbox(sf::RenderWindow &window) {
-    window.draw(textbox);
+void Textbox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    target.draw(textbox, states);
 }
 
 void Textbox::clearText() {
@@ -51,8 +49,8 @@ void Textbox::clearText() {
 
 sf::String Textbox::handleTypedOn(const sf::Event& input) {
     if (const auto* textEntered = input.getIf<sf::Event::TextEntered>()) {
-        int charTyped = static_cast<int>(textEntered->unicode);
-        if (text.getSize() < limit || charTyped == BACKSPACE_KEY || charTyped == ENTER_KEY || charTyped == DELETE_KEY) {
+        const char32_t charTyped = textEntered->unicode;
+        if (text.getSize() < limit || charTyped == backspaceKey || charTyped == enterKey || charTyped == deleteKey) {
             return handleInput(charTyped);
         }
     }

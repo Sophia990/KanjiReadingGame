@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/System/String.hpp>
 #include <utility>
 
 class Word {
@@ -13,9 +13,9 @@ public:
            kana(std::move(kana)),
            romaji(std::move(romaji)) {}
 
-    sf::String getKanji();
-    sf::String getKana();
-    sf::String getRomaji();
+    const sf::String& getKanji() const;
+    const sf::String& getKana() const;
+    const sf::String& getRomaji() const;
 
 private:
     sf::String kanji;

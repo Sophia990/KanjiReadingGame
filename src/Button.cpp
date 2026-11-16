@@ -1,13 +1,5 @@
 #include "Button.h"
 
-void Button::setBackgroundColour(sf::Color colour) {
-    button.setFillColor(colour);
-}
-
-void Button::setTextColour(sf::Color colour) {
-    text.setFillColor(colour);
-}
-
 void Button::setPosition(sf::Vector2f point) {
     button.setOrigin(button.getLocalBounds().getCenter());
     button.setPosition(point);
@@ -16,14 +8,12 @@ void Button::setPosition(sf::Vector2f point) {
     text.setPosition(point);
 }
 
-void Button::drawButton(sf::RenderWindow &window) {
-    window.draw(button);
-    window.draw(text);
+void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    target.draw(button, states);
+    target.draw(text, states);
 }
 
-bool Button::isMouseOver(sf::RenderWindow &window) {
-    int mouseX = sf::Mouse::getPosition(window).x;
-    int mouseY = sf::Mouse::getPosition(window).y;
-
-    return button.getGlobalBounds().contains({static_cast<float>(mouseX), static_cast<float>(mouseY)});
+bool Button::isMouseOver(const sf::RenderWindow& window) const {
+    const sf::Vector2f mousePosition(sf::Mouse::getPosition(window));
+    return button.getGlobalBounds().contains(mousePosition);
 }

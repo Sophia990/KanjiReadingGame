@@ -5,7 +5,7 @@
 #include "FallingWord.h"
 #include "WordList.h"
 
-class FallingWordList {
+class FallingWordList : public sf::Drawable {
 public:
     void dropWord(std::uniform_real_distribution<float> &xDist,
                              std::mt19937 &randomNumberGenerator,
@@ -14,10 +14,10 @@ public:
 
     void update(float dt, float speed, float bottomLine, const sf::String& answer, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound);
 
-    void drawWords(sf::RenderWindow &window);
-
     void clearWords();
 
 private:
-    std::list<FallingWord> fallingWordList;
+    std::list<FallingWord> fallingWords;
+
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

@@ -5,7 +5,7 @@
 #include <utility>
 #include "Word.h"
 
-class FallingWord: public Word {
+class FallingWord: public Word, public sf::Drawable {
 
 public:
     FallingWord(sf::String kanji,
@@ -20,16 +20,17 @@ public:
         text.setFillColor(sf::Color::White);
         text.setString(getKanji());
         text.setOrigin(text.getLocalBounds().getCenter());
+        text.setPosition(position);
     }
 
-    sf::Vector2f position;
-
     bool getShouldDestroy() const;
-    void drawWord(sf::RenderWindow &window);
     void fall(float dt, float speed, float bottomLine, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound);
     void destroy(bool answeredCorrectly, int& points, int& lives, sf::Sound& correctSound, sf::Sound& incorrectSound);
 
 private:
     sf::Text text;
     bool shouldDestroy = false;
+    sf::Vector2f position;
+
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

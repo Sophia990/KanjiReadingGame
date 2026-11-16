@@ -4,10 +4,10 @@
 #include <cstddef>
 #include <cstdint>
 
-class Textbox {
+class Textbox : public sf::Drawable {
 public:
-    explicit Textbox(
-            int characterSize,
+    Textbox(
+            unsigned int characterSize,
             sf::Color colour,
             const sf::Font& font) : textbox(font) {
         textbox.setCharacterSize(characterSize);
@@ -17,8 +17,7 @@ public:
     }
 
     void setPosition(sf::Vector2f point);
-    void setLimit(size_t lim);
-    void drawTextbox(sf::RenderWindow &window);
+    void setLimit(std::size_t lim);
     void clearText();
     sf::String handleTypedOn(const sf::Event& input);
 private:
@@ -26,6 +25,6 @@ private:
     sf::String text;
     std::size_t limit = 0;
 
-    sf::String getText();
-    sf::String handleInput(std::uint32_t unicodeTyped);
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    sf::String handleInput(char32_t unicodeTyped);
 };

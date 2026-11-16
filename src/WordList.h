@@ -2,12 +2,13 @@
 
 #include <list>
 #include <string>
+#include <cstddef>
 #include "Word.h"
 
 class WordList {
 public:
     bool readCSV(const std::string& filepath);
-    [[nodiscard]] int getSize() const;
+    [[nodiscard]] std::size_t getSize() const;
 
-    std::list<Word> wordList;
+    std::list<Word> words;
 };

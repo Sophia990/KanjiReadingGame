@@ -11,10 +11,10 @@
 #include "FallingWordList.h"
 #include "Button.h"
 
-enum GameState {
-	START_MENU,
-	GAME,
-	GAME_OVER
+enum class GameState {
+	StartMenu,
+	Playing,
+	GameOver
 };
 
 int main()
@@ -23,12 +23,13 @@ int main()
 
 	window.setVerticalSyncEnabled(true);
 
+	// display window first to avoid flash while assets load
+	window.clear();
     window.display();
-    window.clear();
 
-    enum GameState gameState = START_MENU;
+    GameState gameState = GameState::StartMenu;
 
-	const float BOTTOM_LINE_Y_COORDINATE = static_cast<float>(window.getSize().y) - 400.f;
+	const float bottomLineYCoordinate = static_cast<float>(window.getSize().y) - 400.f;
 
 	// filepaths
 	const std::string fontPath = "assets/fonts/NotoSansJP-Black.ttf";
@@ -80,8 +81,8 @@ int main()
 
 	// make bottom line
 	std::array bottomLine = {
-			sf::Vertex{sf::Vector2f(0.f, BOTTOM_LINE_Y_COORDINATE)},
-			sf::Vertex{sf::Vector2f(static_cast<float>(window.getSize().x), BOTTOM_LINE_Y_COORDINATE)}
+			sf::Vertex{sf::Vector2f(0.f, bottomLineYCoordinate)},
+			sf::Vertex{sf::Vector2f(static_cast<float>(window.getSize().x), bottomLineYCoordinate)}
 	};
 
 	// make points text
@@ -109,7 +110,7 @@ int main()
 
 	FallingWordList fallingWordList;
 
-	sf::String currentAnswer = "";
+	sf::String currentAnswer;
 
 	// title text
 	sf::Text titleText(font);
@@ -145,7 +146,7 @@ int main()
 
 	while ( window.isOpen() )
 	{
-		while ( window.isOpen() && gameState == START_MENU )
+		while ( window.isOpen() && gameState == GameState::StartMenu )
 		{
 			while ( const std::optional event = window.pollEvent() )
 			{
@@ -156,17 +157,17 @@ int main()
                         fallClock.restart();
                         dropClock.restart();
 						music.play();
-						gameState = GAME;
+						gameState = GameState::Playing;
 					}
 			}
 
 			window.clear();
 			window.draw(titleText);
-			startButton.drawButton(window);
+			window.draw(startButton);
 			window.display();
 		}
 
-		while ( window.isOpen() && lives > 0 && gameState == GAME)
+		while ( window.isOpen() && lives > 0 && gameState == GameState::Playing)
 		{
 			float dt = fallClock.restart().asSeconds();
 
@@ -175,7 +176,7 @@ int main()
 				dropClock.restart();
 			}
 
-			fallingWordList.update(dt, fallSpeed, BOTTOM_LINE_Y_COORDINATE, currentAnswer, points, lives, correctSound, incorrectSound);
+			fallingWordList.update(dt, fallSpeed, bottomLineYCoordinate, currentAnswer, points, lives, correctSound, incorrectSound);
             currentAnswer = "";
 			pointsText.setString("Points: " + std::to_string(points));
 			livesText.setString("Lives: " + std::to_string(lives));
@@ -189,18 +190,18 @@ int main()
 			}
 
 			window.clear();
-			answerText.drawTextbox(window);
+			window.draw(answerText);
 			window.draw(pointsText);
 			window.draw(livesText);
 			window.draw(bottomLine.data(), bottomLine.size(), sf::PrimitiveType::Lines);
-			fallingWordList.drawWords(window);
+			window.draw(fallingWordList);
 			window.display();
 		}
 
-		gameState = GAME_OVER;
+		gameState = GameState::GameOver;
 		music.stop();
 
-		while ( window.isOpen() && gameState == GAME_OVER ) {
+		while ( window.isOpen() && gameState == GameState::GameOver ) {
 			while ( const std::optional event = window.pollEvent() )
 			{
 				if ( event->is<sf::Event::Closed>() )
@@ -212,10 +213,10 @@ int main()
 						lives = 5;
 						answerText.clearText();
 						currentAnswer = "";
-						wordList.wordList.clear();
+						wordList.words.clear();
 						if (!wordList.readCSV(csvPath)) return EXIT_FAILURE;
 						fallingWordList.clearWords();
-						gameState = START_MENU;
+						gameState = GameState::StartMenu;
 					}
 			}
 
@@ -224,7 +225,7 @@ int main()
 			finalPointsText.setOrigin(finalPointsText.getLocalBounds().getCenter());
 			window.draw(gameOverText);
 			window.draw(finalPointsText);
-			returnToMenuButton.drawButton(window);
+			window.draw(returnToMenuButton);
 			window.display();
 		}
 	}

@@ -1,13 +1,13 @@
 #include "Word.h"
 
-sf::String Word::getKanji() {
+const sf::String& Word::getKanji() const {
     return kanji;
 }
 
-sf::String Word::getKana() {
+const sf::String& Word::getKana() const {
     return kana;
 }
 
-sf::String Word::getRomaji() {
+const sf::String& Word::getRomaji() const {
     return romaji;
 }

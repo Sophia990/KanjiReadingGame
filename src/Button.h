@@ -2,15 +2,15 @@
 
 #include <SFML/Graphics.hpp>
 
-class Button {
+class Button : public sf::Drawable {
 
 public:
     Button(const sf::String& buttonText,
            sf::Vector2f buttonSize,
-           int charSize,
+           unsigned int charSize,
            sf::Color backgroundColour,
            sf::Color textColour,
-           sf::Font &font) : text(font) {
+           const sf::Font &font) : text(font) {
         button.setSize(buttonSize);
         button.setFillColor(backgroundColour);
 
@@ -19,13 +19,12 @@ public:
         text.setFillColor(textColour);
     }
 
-    void setBackgroundColour(sf::Color colour);
-    void setTextColour(sf::Color colour);
     void setPosition(sf::Vector2f point);
-    void drawButton(sf::RenderWindow &window);
-    bool isMouseOver(sf::RenderWindow &window);
+    bool isMouseOver(const sf::RenderWindow& window) const;
 
 private:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
     sf::RectangleShape button;
     sf::Text text;
 };
