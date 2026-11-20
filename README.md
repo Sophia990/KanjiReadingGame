@@ -81,3 +81,5 @@ Life lost sound - AceOfSpadesProduc100 (https://freesound.org/people/AceOfSpades
 Font - Noto Sans Japanese (https://fonts.google.com/noto/specimen/Noto+Sans+JP)
 
 Vocabulary list - OpenJLPT contributors, & Clan, E. (2026). OpenJLPT: an open JLPT N5–N1 dataset of vocabulary, kanji and grammar (Version 0.3.0) [Data set]. (https://github.com/evanclan/OpenJLPT)
+
+CMake SFML Project Template - Lukas Dürrenberger (https://github.com/SFML/cmake-sfml-project)
