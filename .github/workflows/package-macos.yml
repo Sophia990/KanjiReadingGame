@@ -1,0 +1,28 @@
+name: Package macOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=FALSE
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Package
+        run: |
+          mkdir -p dist/ItsRainingKanji-macos
+          cp build/bin/ItsRainingKanji dist/ItsRainingKanji-macos/
+          cp -R build/bin/assets dist/ItsRainingKanji-macos/
+          (cd dist && zip -r ItsRainingKanji-macos.zip ItsRainingKanji-macos)
+          
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: dist/ItsRainingKanji-macos.zip
