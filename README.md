@@ -2,7 +2,6 @@
 
 Download and play game: https://sophia990.itch.io/its-raining-kanji
 
-## Intro
 It’s Raining Kanji is a quiz game in which Japanese learners can test their knowledge of kanji readings for JLPT N5 (beginner) level vocabulary, by typing in the readings for words as they fall down from the top of the screen, similarly to the alien invaders in Space Invaders. Letting a word reach the bottom of the screen costs you a life, and the aim is to enter as many correct answers as you can before you run out of lives. The more answers you get correct, the faster the words fall, meaning the game gets more challenging the better you are.
 
 For this game, I wanted to create something aligning with my personal interests outside of games, in this case, learning Japanese, as well as have a project I could show off using C++ outside of a game engine.
